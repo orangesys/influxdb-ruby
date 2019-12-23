@@ -70,7 +70,7 @@ module InfluxDB
 
     def do_request(http, req, data = nil)
       req.basic_auth config.username, config.password if basic_auth?
-      req['Authorization'] = "Bearer #{config.jwt_token}" if config.jwt_token?
+      req['Authorization'] = "Bearer #{config.jwt_token}"
       req.body = data if data
       http.request(req)
     end
