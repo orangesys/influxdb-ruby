@@ -47,11 +47,11 @@ for documentation.
 
 ## Installation
 
-```
-$ [sudo] gem install influxdb
-```
+add it to your `Gemfile`, and run `bundle install`.
 
-Or add it to your `Gemfile`, and run `bundle install`.
+``` sh
+$ [sudo] echo 'gem "influxdb", :git => "https://github.com/orangesys/influxdb-ruby.git", :tag => "v0.7.0"' >> Gemfile
+```
 
 ## Usage
 
@@ -62,36 +62,10 @@ Or add it to your `Gemfile`, and run `bundle install`.
 Connecting to a single host:
 
 ``` ruby
-influxdb = InfluxDB::Client.new  # default connects to localhost:8086
-
-# or
-influxdb = InfluxDB::Client.new host: "influxdb.domain.com"
-```
-
-Connecting to multiple hosts (with built-in load balancing and failover):
-
-``` ruby
-influxdb = InfluxDB::Client.new hosts: ["influxdb1.domain.com", "influxdb2.domain.com"]
-```
-
-#### Using a configuration URL
-
-You can also provide a URL to connect to your server. This is particulary
-useful for 12-factor apps, i.e. you can put the configuration in an environment
-variable:
-
-``` ruby
-url = ENV["INFLUXDB_URL"] || "https://influxdb.example.com:8086/database_name?retry=3"
-influxdb = InfluxDB::Client.new url: url
-```
-
-Please note, that the config options found in the URL have a lower precedence
-than those explicitly given in the options hash. This means, that the following
-sample will use an open-timeout of 10 seconds:
-
-``` ruby
-url = "https://influxdb.example.com:8086/database_name?open_timeout=3"
-influxdb = InfluxDB::Client.new url: url, open_timeout: 10
+influxdb = InfluxDB::Client.new host: "demo.i.orangesys.io",
+  port: 443,
+  use_ssl=true,
+  jwt_token: "<orangesys_jwt_token>"
 ```
 
 ### Writing data
@@ -101,7 +75,7 @@ Write some data:
 ``` ruby
 username = 'foo'
 password = 'bar'
-database = 'site_development'
+database = 'telegraf'
 name     = 'foobar'
 
 influxdb = InfluxDB::Client.new database, username: username, password: password
@@ -126,7 +100,7 @@ Write data with time precision (precision can be set in 2 ways):
 ``` ruby
 username       = 'foo'
 password       = 'bar'
-database       = 'site_development'
+database       = 'telegraf'
 name           = 'foobar'
 time_precision = 's'
 
@@ -162,7 +136,7 @@ Allowed values for `time_precision` are:
 Write data with a specific retention policy:
 
 ``` ruby
-database  = 'site_development'
+database  = 'telegraf'
 name      = 'foobar'
 precision = 's'
 retention = '1h.cpu'
@@ -183,7 +157,7 @@ influxdb.write_point(name, data, precision, retention)
 Write data while choosing the database:
 
 ``` ruby
-database  = 'site_development'
+database  = 'telegraf'
 name      = 'foobar'
 precision = 's'
 retention = '1h.cpu'
@@ -248,7 +222,7 @@ influxdb.write_points(data, precision, retention)
 Write asynchronously:
 
 ``` ruby
-database = 'site_development'
+database = 'telegraf'
 name     = 'foobar'
 
 influxdb = InfluxDB::Client.new database,
@@ -367,7 +341,7 @@ As with `client.write_point`, allowed values for `time_precision` are:
 ### Querying
 
 ``` ruby
-database = 'site_development'
+database = 'telegraf'
 influxdb = InfluxDB::Client.new database,
   username: "foo",
   password: "bar"
@@ -465,7 +439,7 @@ influxdb.query positional_params_query, params: ["foobar", 42]
 Create a database:
 
 ``` ruby
-database = 'site_development'
+database = 'telegraf'
 
 influxdb.create_database(database)
 ```
@@ -473,7 +447,7 @@ influxdb.create_database(database)
 Delete a database:
 
 ``` ruby
-database = 'site_development'
+database = 'telegraf'
 
 influxdb.delete_database(database)
 ```
@@ -487,7 +461,7 @@ influxdb.list_databases
 Create a user for a database:
 
 ``` ruby
-database = 'site_development'
+database = 'telegraf'
 new_username = 'foo'
 new_password = 'bar'
 permission = :write
